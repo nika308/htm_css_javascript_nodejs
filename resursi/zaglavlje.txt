@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="hr">
+    <!--nevidljiv dio stranice-->
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Nika Antolić">
+        <meta name="keywords" content="dinamična, popis primjerka, nesređena lista">
+        <link rel="stylesheet" href="css/nantolic22.css" type="text/css">
+        <link rel="stylesheet" href="css/nantolic22_responzivan.css" type="text/css">
+        <title>Dinamična stranica</title>
+    </head>
+    <style>
+        .sadrzaj {
+            margin-left: 35px;
+        }
+    </style>
+
+    <body>
+        <!--zaglavlje-->
+        <header class="zaglavlje">
+            <a href="/"><img src="slike/logo_muzeja.png" alt="Logo stranice" width="80" height="80"></a>
+            <h1>Dinamična stranica</h1>
+        </header>
+        <!--navigacija-->
+        <div class="okvir_navbar">
+            <nav class="navbar">
+                <a href="/">Početna stranica</a>
+                <a href="/rez">Obrazac validacija</a>
+                <a href="/gal">Galerija</a>
+                <a href="/izl">Izložbeni primjerci</a>
+                <a href="/obr">Obrazac izložba</a>
+                <a class="aktivno" href="/popis">Dinamična stranica</a>
+                <a href="/oau">O autoru</a>
+                <a href="/dok">Dokumentacija</a>
+                <a href="/owt/izlozba">REST servis</a>
+            </nav>
+        </div>
+        <div class="sadrzaj">

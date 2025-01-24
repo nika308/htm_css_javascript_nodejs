@@ -1,0 +1,77 @@
+function postaviKolacic(naziv, vrijednost, dani){
+    const datum=new Date();
+    datum.setTime(datum.getTime()+(dani*24*60*60*1000));
+    const istice="expires="+datum.toUTCString();
+    document.cookie=naziv+"="+vrijednost+";"+istice+";path/=";
+    console.log(`Kolačić postavljen: ${naziv}=${vrijednost}; ${istice}`);
+}
+
+function citajKolacic(naziv){
+    const ime=naziv+"=";
+    const dekodirani=decodeURIComponent(document.cookie);
+    const dijelovi=dekodirani.split(';');
+    for(let i=0; i<dijelovi.length; i++){
+        let dio=dijelovi[i];
+        while(dio.charAt(0)==' '){
+            dio=dio.substring(1);
+        }
+        if(dio.indexOf(ime)==0){
+            return dio.substring(ime.length, dio.length);
+        }
+    }
+    return "";
+}
+
+function prebaciVerziju(){
+    const body = document.body;
+    const button = document.getElementById('prebaciGumb');
+    if(body.classList.contains('mobile')){
+        body.classList.remove('mobile');
+        button.textContent='Prebaci na mobilnu verziju';
+        postaviKolacic('verzijaUredaja', 'desktop', 7);
+    }
+    else{
+        body.classList.add('mobile');
+        button.textContent='Vrati na stolnu verziju';
+        postaviKolacic('verzijaUredaja', 'mobile', 7);
+    }
+}
+
+function postaviVerzijuNaUcitavanje(){
+    const gumb = document.getElementById("prebaciGumb");
+    if(gumb){ 
+        const verzija = citajKolacic('verzijaUredaja');
+        const body = document.body;
+        const button = document.getElementById("prebaciGumb");
+        if(verzija === 'mobile'){
+            body.classList.add('mobile');
+            button.textContent = "Vrati na stolnu verziju";
+        }else{
+            body.classList.remove('mobile');
+            button.textContent = "Prebaci na mobilnu verziju";
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const links = document.querySelectorAll('.brisanje');
+    links.forEach(link => {
+        link.addEventListener('click', function(event){
+            event.preventDefault();
+            const nazivPrimjerka = this.getAttribute('data-naziv');
+            const encodedNazivPrimjerka = encodeURIComponent(nazivPrimjerka);
+            if (confirm(`Želite li obrisati izložbeni primjerak: ${nazivPrimjerka}?`)){
+                window.location.href = `/brisi?naziv=${encodedNazivPrimjerka}`;
+            }
+        });
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', postaviVerzijuNaUcitavanje);
+
+
+
+
+
+

@@ -1,0 +1,169 @@
+function dajPort(korime) {
+	var os = require("os");
+	const HOST = os.hostname();
+	let port = null;
+	if (HOST != "spider.foi.hr") {
+		port = 12222; //localhost:12222
+	} else {
+		const portovi = require("/var/www/OWT/2024/portovi.js");
+		port = portovi[korime];
+	}
+	return port;
+}
+
+const port = dajPort("nantolic22"); //vlastito korisnicko ime
+
+const express = require("/usr/lib/node_modules/express");
+const server = express();
+
+const putanja = __dirname;
+
+console.log(putanja);
+
+server.get("/", (zahtjev, odgovor) => {
+	odgovor.sendFile(putanja + "/html/index.html");
+});
+
+server.listen(port, () => {
+	console.log(`Server pokrenut na portu: ${port}`);
+});
+
+server.use("/css", express.static(putanja + "/css"));
+server.use("/jsk", express.static(putanja + "/js/klijent"));
+server.use("/slike", express.static(putanja + "/resursi/slike"));
+
+server.get("/oau", (zahtjev, odgovor) => {
+	odgovor.sendFile(putanja + "/html/oAutoru.html");
+});
+server.get("/dok", (zahtjev, odgovor) => {
+	odgovor.sendFile(putanja + "/html/dokumentacija.html");
+});
+server.get("/gal", (zahtjev, odgovor) => {
+	odgovor.sendFile(putanja + "/html/galerija.html");
+});
+server.get("/izl", (zahtjev, odgovor) => {
+	odgovor.sendFile(putanja + "/html/izlozba.html");
+});
+server.get("/rez", (zahtjev, odgovor) => {
+	odgovor.sendFile(putanja + "/html/rezervacija_karti.html");
+});
+server.get("/noc", (zahtjev, odgovor) => {
+	odgovor.sendFile(putanja + "/html/noc_muzeja.html");
+});
+server.get("/obi", (zahtjev, odgovor) => {
+	odgovor.sendFile(putanja + "/html/obiteljski_dan.html");
+});
+server.get("/kre", (zahtjev, odgovor) => {
+	odgovor.sendFile(putanja + "/html/kreativan_kutak.html");
+});
+server.get("/obr", (zahtjev, odgovor) => {
+	odgovor.sendFile(putanja + "/html/obrazac_izlozba.html");
+});
+
+server.use(express.urlencoded({ extended: true }));
+server.use(express.json());
+
+server.post("/owt/izlozba", (zahtjev, odgovor) => {
+	odgovor.write(JSON.stringify(zahtjev.body));
+	odgovor.end();
+});
+
+const ds = require("fs");
+const mojaTablica = require("./dajTablicu.js");
+
+
+const path = require('path'); 
+const csvPath = path.join(__dirname, 'podaci', 'izlozba.csv'); 
+const jsonPath = path.join(__dirname, 'podaci', 'izlozba.json');
+
+const ModulDatoteke = require(putanja + "/modulDatoteke.js");
+
+
+server.get('/popis', (zahtjev, odgovor) => {
+	let zaglavlje = ds.readFileSync("resursi/zaglavlje.txt", "UTF-8");
+	let podnozje = ds.readFileSync("resursi/podnozje.txt", "UTF-8");
+	odgovor.type("html");
+	odgovor.write(zaglavlje);
+	odgovor.write("<h1>Dinamična stranica</h1>");
+	odgovor.write(mojaTablica.dajTablicu());
+	odgovor.write(podnozje);
+	odgovor.end();
+});
+server.get('/brisi', (zahtjev, odgovor) => {
+    const naziv = zahtjev.query.naziv;
+    if (naziv) {
+        ModulDatoteke.brisiCSV(csvPath, naziv);
+        odgovor.redirect('/popis');
+    } else {
+        odgovor.status(400).send("Naziv primjerka nije naveden.");
+    }
+});
+
+server.get('/owt/izlozba', (zahtjev, odgovor) => {
+    odgovor.type("application/json");
+    odgovor.status(200).json(mojaTablica.ispisPodataka());
+});
+server.post('/owt/izlozba', (zahtjev, odgovor) => {
+    const noviPodatak = zahtjev.body;
+    if (!noviPodatak) {
+        odgovor.status(417).json({ error: 'Nevaljani podaci' });
+        return;
+    }
+    const noviRed = `${noviPodatak.Naziv}#${noviPodatak.Opis}#${noviPodatak.Godina_izrade}#${noviPodatak.Kategorija}#${noviPodatak.Status}`;
+    dodajRedUCSV(noviRed);
+    odgovor.status(200).json({ message: 'Podaci dodani' });
+});
+server.put("/owt/izlozba", (zahtjev, odgovor) => {
+    odgovor.type("application/json")
+    odgovor.status(501);
+    let poruka = { greska: "Metoda nije implementirana" }
+    odgovor.send(JSON.stringify(poruka));
+});
+server.delete("/owt/izlozba", (zahtjev, odgovor) => {
+    odgovor.type("application/json")
+    odgovor.status(501);
+    let poruka = { greska: "Metoda nije implementirana" }
+    odgovor.send(JSON.stringify(poruka));
+});
+
+
+
+
+server.get('/owt/izlozba/:naziv', (zahtjev, odgovor) => {
+    const naziv = zahtjev.params.naziv;
+    const podatak = mojaTablica.dohvatiNaziv(naziv);
+    if (podatak) {
+        odgovor.status(200).json(podatak);
+    } else {
+        odgovor.status(404).json({ error: 'Nema resursa' });
+    }
+});
+server.post("/owt/izlozba/:naziv", (zahtjev, odgovor) => {
+    odgovor.type("application/json")
+    odgovor.status(405);
+    let poruka = { greska: "Metoda nije dopuštena" }
+    odgovor.send(JSON.stringify(poruka));
+});
+server.put("/owt/izlozba/:naziv", (zahtjev, odgovor) => {
+    odgovor.type("application/json")
+    odgovor.status(501);
+    let poruka = { greska: "Metoda nije implementirana" }
+    odgovor.send(JSON.stringify(poruka));
+});
+server.delete('/owt/izlozba/:naziv', (zahtjev, odgovor) => {
+    const naziv = zahtjev.params.naziv;
+    const zapis = ModulDatoteke.dohvatiPodatak(naziv);
+    if (!zapis) {
+        return odgovor.status(404).json({ error: 'Nema resursa' });
+    }
+    ModulDatoteke.brisiCSV(naziv);
+    return odgovor.status(200).json({ message: 'Podaci izbrisani' });
+});
+
+
+
+
+server.use((zahtjev, odgovor) => {
+    odgovor.status(404);
+    odgovor.send("Stranica ne postoji!<br><a href='/'>Vrati se na početnu</a>");
+});

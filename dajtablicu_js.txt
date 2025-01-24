@@ -1,0 +1,70 @@
+const ds = require('fs');
+const path = require('path');
+
+exports.dajTablicu = function(){
+    let data = ds.readFileSync("podaci/izlozba.csv", "UTF-8");
+    let lista = "";
+
+    let redovi = data.split("\n");
+    lista += "<ul class='pomaknuta-lista'>";
+    for (let red of redovi) {
+        let kolone = red.split("#");
+        let naziv = kolone[0];
+        let detalji = kolone.slice(1).join(' - ');
+        lista +=
+            `<li><a href="#" class="brisanje" data-naziv="${naziv}">${naziv}</a> - ${detalji}</li>`;
+    }
+    lista += "</ul>";
+
+    return lista;
+};
+
+exports.popisPrimjerka = function(){
+    const primjerci = ds.readFileSync("podaci/izlozba.csv", "UTF-8");
+    var redovi = primjerci.split("\n");
+    var obj = [];
+    for(var i=0; i<redovi.length; i++){
+        var red = redovi[i].split("#");
+        var objekat = {
+            Naziv: red[0],
+            Opis: red[1],
+            Godina_izrade: red[2],
+            Kategorija: red[3],
+            Status: red[4]
+        };
+        obj.push(objekat);
+    }
+    return obj;
+};
+
+exports.ispisPodataka = function(){
+    return exports.popisPrimjerka();
+};
+
+
+
+exports.dohvatiNaziv = function(naziv) {
+    const primjerci = this.popisPrimjerka();
+    for (let i = 0; i < primjerci.length; i++) {
+        if (primjerci[i].Naziv === naziv) {
+            return primjerci[i];
+        }
+    }
+    return null; 
+};
+
+exports.obrisiPrimjerak = function(naziv) {
+    var primjerci = this.popisPrimjerka();
+    var obrisaniPrimjerak = [];
+    var obrisan = "";
+    for (var i = 0; i < primjerci.length; i++) {
+        if (primjerci[i].Naziv !== naziv) {
+            obrisaniPrimjerak.push(primjerci[i]);
+        } else {
+            obrisan = primjerci[i];
+        }
+    }
+    return obrisan;
+};
+
+

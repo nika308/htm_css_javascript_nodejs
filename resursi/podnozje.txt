@@ -1,0 +1,13 @@
+            </div>
+            <footer class="podnozje">
+                <span>&copy; Nika Antolić, 2024.</span>
+                <a target="_blank" href="https://creativecommons.org/licenses/list.en#croatia-25">
+                    <img src="slike/cc_logo.png" alt="CC logo" width="20" height="20">
+                </a>
+                <a target="_blank" href="">
+                    <img src="slike/HTML5.png" alt="HTML logo" width="20" height="20">
+                </a>
+            </footer>
+            <script src="jsk/nantolic22.js"></script>
+    </body>
+</html>

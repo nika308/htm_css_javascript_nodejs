@@ -1,0 +1,45 @@
+const ds = require('fs');
+
+class ModulDatoteke {
+    static kopirajJSONuCSV(jsonPath, csvPath) {
+        const jsonData = JSON.parse(ds.readFileSync(jsonPath, 'utf8'));
+        const csvData = jsonData.map(item => `${item.naziv}#${item.opis}#${item.godina}#${item.kategorija}#${item.status}`).join('\n');
+        ds.writeFileSync(csvPath, csvData, 'utf8');
+    }
+
+    static prebaciCSVuJSON(csvLine) {
+        const [naziv, opis, godina, kategorija, status] = csvLine.split('#');
+        return { naziv, opis, godina, kategorija, status };
+    }
+
+    static prebaciJSONuCSV(jsonObject) {
+        return `${jsonObject.naziv}#${jsonObject.opis}#${jsonObject.godina}#${jsonObject.kategorija}#${jsonObject.status}`;
+    }
+
+    static citajCSV(csvPath) {
+        const data = ds.readFileSync(csvPath, 'utf8');
+        return data.split('\n').map(line => this.prebaciCSVuJSON(line));
+    }
+
+    static pisiCSV(csvPath, data) {
+        const csvData = data.map(item => this.prebaciJSONuCSV(item)).join('\n');
+        ds.writeFileSync(csvPath, csvData, 'utf8');
+    }
+
+    static brisiCSV(csvPath, naziv) {
+        let data = this.citajCSV(csvPath);
+        data = data.filter(item => item.naziv !== naziv);
+        this.pisiCSV(csvPath, data);
+    }
+
+    static ispisPodataka(csvPath) {
+        return this.citajCSV(csvPath);
+    }
+
+    static dohvatiPodatak(csvPath, naziv) {
+        const podaci = this.citajCSV(csvPath);
+        return podaci.find(podatak => podatak.naziv === naziv);
+    }
+}
+
+module.exports = ModulDatoteke;

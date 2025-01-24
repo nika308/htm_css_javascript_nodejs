@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="hr">
+<!--nevidljiv dio stranice-->
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Nika Antolić">
+        <meta name="keywords" content="obrazac, izložba, podaci">
+        <link rel="stylesheet" href="css/nantolic22.css" type="text/css">
+        <link rel="stylesheet" href="css/nantolic22_responzivan.css" type="text/css">
+        <link rel="stylesheet" href="css/nantolic22_ispis_tablice.css" type="text/css">
+        <title>Obrazac izložba</title>
+        <style>
+            h2{
+                text-align: center;
+            }
+            .okvir_obrazac_izlozba{
+                max-width: 500px;
+                margin: 0px auto;
+                border: 2px solid black;
+                padding: 35px;
+                background-color: rgb(209, 209, 209);
+            }
+            .okvir_obrazac_izlozba input[type="submit"],
+            .okvir_obrazac_izlozba input[type="reset"]{
+                padding: 10px 20px;
+                margin-top: 10px;
+                border: none;
+                background-color: #7d7d7d;
+                color: black;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            .okvir_obrazac_izlozba input[type="submit"]:hover,
+            .okvir_obrazac_izlozba input[type="reset"]:hover{
+                background-color: #b6b4b4;
+            }
+            .okvir_obrazac_izlozba input[type="text"],
+            .okvir_obrazac_izlozba select,
+            .okvir_obrazac_izlozba textarea{
+                width: 50%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 7px;
+                margin-bottom: 10px;
+                box-sizing: border-box;
+            }
+            .okvir_obrazac_izlozba textarea{
+                width: 70%;
+            }
+        </style>
+    </head>
+
+    <!--vidljiv dio stranice-->
+    <body>
+        <!--zaglavlje-->
+        <header class="zaglavlje">
+            <a href="/"><img src="slike/logo_muzeja.png" alt="Logo stranice" width="80" height="80"></a>
+            <h1>Obrazac izložba</h1>
+        </header>
+        <!--navigacija-->
+        <div class="okvir_navbar">
+            <nav class="navbar">
+                <a href="/">Početna stranica</a>
+                <a href="/rez">Obrazac validacija</a>
+                <a href="/gal">Galerija</a>
+                <a href="/izl">Izložbeni primjerci</a>
+                <a class="aktivno"  href="/obr">Obrazac izložba</a>
+                <a href="/popis">Dinamična stranica</a>
+                <a href="/oau">O autoru</a>
+                <a href="/dok">Dokumentacija</a>
+                <a href="/owt/izlozba">REST servis</a>
+            </nav>
+        </div>
+
+        </main>
+            <h2>Obrazac izložbe</h2>
+            <form action="/owt/izlozba" method="post" class="okvir_obrazac_izlozba" id="obrazac2" target="_blank">
+                <label for="naziv">Naziv:</label>
+                <input type="text" id="naziv" name="naziv">
+                <span id="nazivError"></span><br>
+
+                <label for="opis">Opis:</label><br>
+                <textarea id="opis" name="opis"></textarea>
+                <span id="opisError"></span><br>
+
+                <label for="godina">Godina izrade:</label>
+                <input type="text" id="godina" name="godina">
+                <span id="godinaError"></span><br>
+
+                <label for="kategorija">Kategorija:</label>
+                <input type="text" id="kategorija" name="kategorija">
+                <span id="kategorijaError"></span><br>
+
+                <label for="status">Status:</label>
+                <span id="statusError"></span>
+                    <select name="status" id="status">
+                        <option value="">Odaberite...</option>
+                        <option value="replika">Replika</option>
+                        <option value="original">Original</option>
+                        <option value="restauriran">Restauriran</option>
+                    </select>
+                    <br>
+
+                <input type="submit" value="Pošalji">
+                <input type="reset" id="resetButton2" value="Osvježi">
+            </form>
+        </main>
+        <footer class="podnozje">
+            <span>&copy; Nika Antolić, 2024.</span>
+            <a target="_blank" href="https://creativecommons.org/licenses/list.en#croatia-25">
+                <img src="slike/cc_logo.png" alt="CC logo" width="20" height="20">
+            </a>
+            <a target="_blank" href="https://validator.w3.org/nu/?doc=https%3A%2F%2Fspider.foi.hr%2FOWT%2F2024%2Fzadaca_01%2Fnantolic22%2Fhtml%2Fizlozba.html">
+                <img src="slike/HTML5.png" alt="HTML logo" width="20" height="20">
+            </a>
+        </footer>
+        <script src="jsk/nantolic22_obrazac.js"></script>
+    </body>
+</html>
+

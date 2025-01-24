@@ -1,0 +1,507 @@
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("obrazac").addEventListener("submit", function(event){
+        var imeprezime = document.getElementById("ime_prezime").value;
+        var email = document.getElementById("email").value;
+        var telefon = document.getElementById("telefon").value;
+        var datumInput = document.getElementById("datum");
+        var datum = new Date(datumInput.value);
+        var brojkarti = document.getElementById("broj_karti").value;
+        var napomene = document.getElementById("napomene").value;
+        var grupe = document.getElementById("dodatne_opcije").querySelectorAll("optgroup");
+
+        var imeprezimeError = document.getElementById("imeprezimeError");
+        var emailError = document.getElementById("emailError");
+        var telError = document.getElementById("telError");
+        var datumError = document.getElementById("datumError");
+        var brojkartiError = document.getElementById("brojkartiError");
+        var vrstaKarteError = document.getElementById("vrstaKarteError");
+        var napomeneError = document.getElementById("napomeneError");
+        var opcijeError = document.getElementById("opcijeError");
+
+        var radioGumb = document.getElementsByName("vrsta_karte");
+        var vrstaKarteProvjera = false;
+        for(var i = 0; i < radioGumb.length; i++){
+            if(radioGumb[i].checked){
+                vrstaKarteProvjera = true;
+                for(var j = 0; j < radioGumb.length; j++){
+                    radioGumb[j].nextElementSibling.style.color = "";
+                }
+                break;
+            }else{
+                radioGumb[i].nextElementSibling.style.color = "red";
+            }
+        }
+        if(!vrstaKarteProvjera){
+            vrstaKarteError.innerHTML = "Molimo odaberite vrstu karte";
+            vrstaKarteError.style.color = "red";
+            event.preventDefault();
+        }else{
+            vrstaKarteError.innerHTML = "";
+            for (var i = 0; i < radioGumb.length; i++){
+                radioGumb[i].style.color = "";
+            }
+        }
+
+        var minDatum = new Date();
+        minDatum.setDate(minDatum.getDate() + 2);
+        var maxDatum = new Date();
+        maxDatum.setMonth(maxDatum.getMonth() + 1);
+
+        if(datumInput.value === ""){
+            datumError.innerHTML = "Molimo unesite datum";
+            datumError.style.color = "red";
+            document.getElementById("datum").style.borderColor = "red";
+            event.preventDefault();
+        }else if(datum < minDatum || datum > maxDatum){
+            datumError.innerHTML = "Datum mora biti između " + minDatum.toLocaleDateString() + " i " + maxDatum.toLocaleDateString() + ".";
+            datumError.style.color = "red";
+            document.getElementById("datum").style.borderColor = "red";
+            event.preventDefault();
+        }else{
+            datumError.innerHTML = "";
+            document.getElementById("datum").style.borderColor = "";
+        }
+
+        if(brojkarti < 2 || brojkarti > 10){
+            brojkartiError.innerHTML = "Molimo unesite broj karata između 2 i 10.";
+            brojkartiError.style.color = "red";
+            document.getElementById("broj_karti").style.borderColor = "red";
+            event.preventDefault();
+        }else{
+            brojkartiError.innerHTML = "";
+            document.getElementById("broj_karti").style.borderColor = "";
+        }
+
+        
+        var br = 0;
+        for(var i = 0; i<grupe.length; i++){
+            var opcijeGrupe = grupe[i].querySelectorAll("option");
+            var odabrano = false;
+            for(var j = 0; j<opcijeGrupe.length; j++){
+                if(opcijeGrupe[j].selected){
+                    odabrano = true;
+                    break;
+                }
+            }
+        
+            if(odabrano){
+                br++;
+            }
+        }
+        if(br<2){
+            opcijeError.innerHTML="Odaberite barem jednu opciju iz svake grupe";
+            opcijeError.style.color="red";
+            document.getElementById("dodatne_opcije").style.borderColor = "red";
+            event.preventDefault();
+        }else{
+            opcijeError.innerHTML="";
+            document.getElementById("dodatne_opcije").style.borderColor = "";
+        }
+
+        if(imeprezime === ""){
+            imeprezimeError.innerHTML = "Molimo unesite ime i prezime.";
+            imeprezimeError.style.color = "red";
+            document.getElementById("ime_prezime").style.borderColor = "red";
+            event.preventDefault();
+        }else{
+            imeprezimeError.innerHTML = "";
+            document.getElementById("ime_prezime").style.borderColor = "";
+        }
+
+        if(email === ""){
+            emailError.innerHTML = "Molimo unesite email.";
+            document.getElementById("email").style.borderColor = "red";
+            emailError.style.color = "red";
+            event.preventDefault();
+        }else if (!provjeriEmail(email)){
+            emailError.innerHTML = "Molimo unesite ispravan email.";
+            document.getElementById("email").style.borderColor = "red";
+            emailError.style.color = "red";
+            event.preventDefault();
+        }else{
+            emailError.innerHTML = "";
+            document.getElementById("email").style.borderColor = "";
+        }
+
+        if(telefon === "" || !provjeriTelefon(telefon)){
+            telError.innerHTML = "Molimo unesite telefon";
+            document.getElementById("telefon").style.borderColor = "red";
+            telError.style.color = "red";
+            event.preventDefault();
+        }else{
+            telError.innerHTML = "";
+            document.getElementById("telefon").style.borderColor = "";
+        }
+
+        if(napomene === ""){
+            napomeneError.innerHTML = "Molimo upišite tekst";
+            document.getElementById("napomene").style.borderColor = "red";
+            napomeneError.style.color="red";
+            event.preventDefault();
+        }else if(!provjeriTekst(napomene)){
+            napomeneError.innerHTML = "Tekst mora početi velikim slovom i završiti točkom, upitnikom ili uskličnikom. Maksimalno 4 rečenice. Bez neželjenih znakova (<, >, #, -). Zadnja rečenica završava s točkom.";
+            document.getElementById("napomene").style.borderColor = "red";
+            napomeneError.style.color="red";
+        }
+        else{
+            napomeneError.innerHTML="";
+            document.getElementById("napomene").style.borderColor = "";
+        }
+    });
+
+
+
+    var radioGumb = document.getElementsByName("vrsta_karte");
+    for(var i = 0; i < radioGumb.length; i++){
+        radioGumb[i].addEventListener("change", function(){
+            var vrstaKarteError = document.getElementById("vrstaKarteError");
+            vrstaKarteError.innerHTML = "";
+            for (var j = 0; j < radioGumb.length; j++){
+                radioGumb[j].nextElementSibling.style.color = ""; // Uklanja crvenu boju sa svih labela (tekst radio dugmadi)
+            }
+            this.nextElementSibling.style.color = "";
+        });
+    }
+    document.getElementById("datum").addEventListener("input", function(){
+        var datumInput = document.getElementById("datum");
+        var datum = new Date(datumInput.value);
+        var datumError = document.getElementById("datumError");
+
+        var minDatum = new Date();
+        minDatum.setDate(minDatum.getDate() + 2);
+        var maxDatum = new Date();
+        maxDatum.setMonth(maxDatum.getMonth() + 1);
+
+        if(datumInput.value === ""){
+            datumError.innerHTML = "Molimo unesite datum";
+            datumError.style.color = "red";
+            document.getElementById("datum").style.borderColor = "red";
+        }else if (datum < minDatum || datum > maxDatum){
+            datumError.innerHTML = "Datum mora biti između " + minDatum.toLocaleDateString() + " i " + maxDatum.toLocaleDateString() + ".";
+            datumError.style.color = "red";
+            document.getElementById("datum").style.borderColor = "red";
+        }else{
+            datumError.innerHTML = "";
+            document.getElementById("datum").style.borderColor = "";
+        }
+    });
+
+    document.getElementById("broj_karti").addEventListener("input", function(){
+        var brojkarti = document.getElementById("broj_karti").value;
+        var brojkartiError = document.getElementById("brojkartiError");
+        if(brojkarti < 2 || brojkarti > 10){
+            brojkartiError.innerHTML = "Molimo unesite broj karata između 2 i 10.";
+            brojkartiError.style.color="red";
+            document.getElementById("broj_karti").style.borderColor = "red";
+        }else{
+            brojkartiError.innerHTML = "";
+            document.getElementById("broj_karti").style.borderColor = "";
+        }
+    });
+
+    document.getElementById("dodatne_opcije").addEventListener("change", function(){
+        var opcijeError = document.getElementById("opcijeError");
+        var odabraneOpcije = this.odabraneOpcije; 
+        var grupe = this.querySelectorAll("optgroup");
+        var sveOpcije = true;
+        for(var i = 0; i<grupe.length; i++){
+            var grupaOpcija = grupe[i].querySelectorAll("option");
+            var odabrano = false;
+            for(var j = 0; j<grupaOpcija.length; j++){
+                if(grupaOpcija[j].selected){
+                    odabrano = true;
+                    break;
+                }
+            }
+            if(!odabrano){
+                sveOpcije = false;
+                break;
+            }
+        }
+        if(!sveOpcije){
+            opcijeError.innerHTML = "Odaberite barem jednu opciju iz svake grupe";
+            opcijeError.style.color = "red";
+            this.style.borderColor = "red";
+        } else {
+            opcijeError.innerHTML = "";
+            this.style.borderColor = "";
+        }
+    });
+    
+    document.getElementById("ime_prezime").addEventListener("input", function(){
+        var imeprezime = document.getElementById("ime_prezime").value;
+        var imeprezimeError = document.getElementById("imeprezimeError");
+        if(imeprezime === ""){
+            imeprezimeError.innerHTML = "Molimo unesite ime i prezime.";
+            imeprezimeError.style.color="red";
+            document.getElementById("ime_prezime").style.borderColor = "red";
+        }else{
+            imeprezimeError.innerHTML = "";
+            document.getElementById("ime_prezime").style.borderColor = "";
+        }
+    });
+    document.getElementById("email").addEventListener("input", function(){
+        var email = document.getElementById("email").value;
+        var emailError = document.getElementById("emailError");
+        if(email === "" || !provjeriEmail(email)){
+            emailError.innerHTML = "Molimo unesite ispravan email.";
+            emailError.style.color="red";
+            document.getElementById("email").style.borderColor = "red";
+        }else{
+            emailError.innerHTML = "";
+            document.getElementById("email").style.borderColor = "";
+        }
+    });
+
+    document.getElementById("telefon").addEventListener("input", function(){
+        var telefon = document.getElementById("telefon").value;
+        var telError = document.getElementById("telError");
+        if(telefon === "" || !provjeriTelefon(telefon)){
+            telError.innerHTML = "Molimo unesite telefon";
+            telError.style.color="red";
+            document.getElementById("telefon").style.borderColor = "red";
+        }else{
+            telError.innerHTML = "";
+            document.getElementById("telefon").style.borderColor = "";
+        }
+    });
+    document.getElementById("napomene").addEventListener("input", function(){
+        var tekst = this.value;
+        var napomeneError = document.getElementById("napomeneError");
+        if(tekst === ""){
+            napomeneError.innerHTML = "Molimo upišite tekst";
+            napomeneError.style.color = "red";
+            document.getElementById("napomene").style.borderColor = "red";
+        }else if (!provjeriTekst(tekst)){
+            napomeneError.innerHTML = "Tekst mora početi velikim slovom i završiti točkom, upitnikom ili uskličnikom. Maksimalno 4 rečenice. Bez neželjenih znakova (<, >, #, -). Zadnja rečenica završava s tokčkom.";
+            napomeneError.style.color = "red";
+            document.getElementById("napomene").style.borderColor = "red";
+        }else{
+            napomeneError.innerHTML = "";
+            document.getElementById("napomene").style.borderColor = "";
+        }
+    });
+    document.getElementById("resetButton").addEventListener("click", function() {
+        var vrstaKarteError = document.getElementById("vrstaKarteError");
+        vrstaKarteError.innerHTML = "";
+    document.getElementById("datum").style.borderColor = "";
+    var datumError = document.getElementById("datumError");
+        datumError.innerHTML = "";
+    document.getElementById("broj_karti").style.borderColor = "";
+    var brojkartiError = document.getElementById("brojkartiError");
+        brojkartiError.innerHTML = "";
+    document.getElementById("dodatne_opcije").style.borderColor = "";
+    var opcijeError = document.getElementById("opcijeError");
+        opcijeError.innerHTML = "";
+    document.getElementById("ime_prezime").style.borderColor = "";
+    var imeprezimeError = document.getElementById("imeprezimeError");
+        imeprezimeError.innerHTML = "";
+    document.getElementById("email").style.borderColor = "";
+    var emailError = document.getElementById("emailError");
+        emailError.innerHTML = "";
+    document.getElementById("telefon").style.borderColor = "";
+    var telError = document.getElementById("telError");
+        telError.innerHTML = "";
+    document.getElementById("napomene").style.borderColor = "";
+    var napomeneError = document.getElementById("napomeneError");
+        napomeneError.innerHTML = "";
+        var radioGumb = document.getElementsByName("vrsta_karte");
+            for (var j = 0; j < radioGumb.length; j++){
+                radioGumb[j].nextElementSibling.style.color = ""; // Uklanja crvenu boju sa svih labela (tekst radio dugmadi)
+            }
+            this.nextElementSibling.style.color = "";
+
+        document.getElementById("obrazac").reset();
+    });
+});
+
+function provjeriEmail(email){
+    var re = /\S+@\S+\.\S+/;
+    return re.test(email);
+}
+
+function provjeriTelefon(telefon){
+    var re = /^[0-9\-\+\s\(\)]{7,15}$/;
+    return re.test(telefon);
+}
+
+function provjeriTekst(tekst){
+    if(tekst === ""){
+        return false;
+    }
+    if(!/^[A-Z].*\.$/.test(tekst)){
+        return false;
+    }
+    if(/[<>#\-]/.test(tekst)){
+        return false;
+    }
+    var recenice = tekst.match(/[A-Z][^.!?]*[.!?]/g);
+    if(recenice && recenice.length > 4){
+        return false;
+    }
+    if(recenice.length<=4){
+        return true;
+    }
+
+    var recenice = tekst.split(/\.|\?|!/); // Razdvajanje teksta na rečenice
+    for(var i = 0; i < recenice.length; i++){
+        var recenica = recenice[i].trim();
+        if(recenica !== ""){
+            if(!/^[A-Z]/.test(recenica)){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("obrazac2").addEventListener("submit", function(event){
+        var naziv = document.getElementById("naziv").value;
+        var opis = document.getElementById("opis").value;
+        var godina = document.getElementById("godina").value;
+        var kategorija = document.getElementById("kategorija").value;
+        var status = document.getElementById("status");
+        
+        var nazivError = document.getElementById("nazivError");
+        var opisError = document.getElementById("opisError");
+        var godinaError = document.getElementById("godinaError");
+        var kategorijaError = document.getElementById("kategorijaError");
+        var statusError = document.getElementById("statusError");
+
+        if(naziv === ""){
+            nazivError.innerHTML = "Molimo unesite naziv";
+            nazivError.style.color = "red";
+            document.getElementById("naziv").style.borderColor = "red";
+            event.preventDefault();
+        }
+        else{
+            nazivError.innerHTML = "";
+            document.getElementById("naziv").style.borderColor = "";
+        }
+
+        if(opis === ""){
+            opisError.innerHTML = "Molimo unesite opis";
+            opisError.style.color = "red";
+            document.getElementById("opis").style.borderColor = "red";
+            event.preventDefault();
+        }
+        else{
+            opisError.innerHTML = "";
+            document.getElementById("opis").style.borderColor = "";
+        }
+        
+        if(kategorija === ""){
+            kategorijaError.innerHTML = "Molimo unesite kategoriju";
+            kategorijaError.style.color = "red";
+            document.getElementById("kategorija").style.borderColor = "red";
+            event.preventDefault();
+        }
+        else{
+            kategorijaError.innerHTML = "";
+            document.getElementById("kategorija").style.borderColor = "";
+        }
+        
+        if(godina === "" || !provjeriGodinu(godina)){
+            godinaError.innerHTML = "Molimo unesite godinu";
+            godinaError.style.color = "red";
+            document.getElementById("godina").style.borderColor = "red";
+            event.preventDefault();
+        }
+        else{
+            godinaError.innerHTML = "";
+            document.getElementById("godina").style.borderColor = "";
+        }
+
+        if(status.value === ""){
+            statusError.innerHTML = "Molimo odaberite jednu opciju";
+            statusError.style.color = "red";
+            document.getElementById("status").style.borderColor = "red";
+            event.preventDefault();
+        }
+        else{
+            statusError = "";
+            document.getElementById("status").style.borderColor = "";
+        }
+    });
+    document.getElementById("status").addEventListener("change", function(){
+        var statusError = document.getElementById("statusError");
+        if(this.value !== ""){
+            statusError.innerHTML = "";
+            this.style.borderColor = "";
+        }
+    });
+    document.getElementById("naziv").addEventListener("input", function(){
+        var naziv = document.getElementById("naziv").value;
+        var nazivError = document.getElementById("nazivError");
+        if(naziv === ""){
+            nazivError.innerHTML = "Molimo unesite naziv";
+            nazivError.style.color="red";
+            document.getElementById("naziv").style.borderColor = "red";
+        }else{
+            nazivError.innerHTML = "";
+            document.getElementById("naziv").style.borderColor = "";
+        }
+    });
+    document.getElementById("opis").addEventListener("input", function(){
+        var opis = document.getElementById("opis").value;
+        var opisError = document.getElementById("opisError");
+        if(opis === ""){
+            opisError.innerHTML = "Molimo unesite opis";
+            opisError.style.color="red";
+            document.getElementById("opis").style.borderColor = "red";
+        }else{
+            opisError.innerHTML = "";
+            document.getElementById("opis").style.borderColor = "";
+        }
+    });
+    document.getElementById("kategorija").addEventListener("input", function(){
+        var kategorija = document.getElementById("kategorija").value;
+        var kategorijaError = document.getElementById("kategorijaError");
+        if(kategorija === ""){
+            kategorijaError.innerHTML = "Molimo unesite kategoriju";
+            kategorijaError.style.color="red";
+            document.getElementById("kategorija").style.borderColor = "red";
+        }else{
+            kategorijaError.innerHTML = "";
+            document.getElementById("kategorija").style.borderColor = "";
+        }
+    });
+    document.getElementById("godina").addEventListener("input", function(){
+        var godina = document.getElementById("godina").value;
+        var godinaError = document.getElementById("godinaError");
+        if(godina === "" || !provjeriGodinu(godina)){
+            godinaError.innerHTML = "Molimo unesite godinu";
+            godinaError.style.color="red";
+            document.getElementById("godina").style.borderColor = "red";
+        }else{
+            godinaError.innerHTML = "";
+            document.getElementById("godina").style.borderColor = "";
+        }
+    });
+    document.getElementById("resetButton2").addEventListener("click", function() {
+        var nazivError = document.getElementById("nazivError");
+        nazivError.innerHTML = "";
+    document.getElementById("naziv").style.borderColor = "";
+    var opisError = document.getElementById("opisError");
+        opisError.innerHTML = "";
+    document.getElementById("opis").style.borderColor = "";
+    var godinaError = document.getElementById("godinaError");
+        godinaError.innerHTML = "";
+    document.getElementById("godina").style.borderColor = "";
+    var kategorijaError = document.getElementById("kategorijaError");
+        kategorijaError.innerHTML = "";
+    document.getElementById("kategorija").style.borderColor = "";
+    var statusError = document.getElementById("statusError");
+        statusError.innerHTML = "";
+    document.getElementById("status").style.borderColor = "";
+
+        document.getElementById("obrazac2").reset();
+    });
+});
+
+function provjeriGodinu(godina){
+    var god = /^[0-9\-\+\s\(\)]{4}$/;
+    return god.test(godina);
+}

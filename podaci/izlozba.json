@@ -1,0 +1,72 @@
+[
+    {
+        "Naziv": "Enigma stroj",
+        "Opis": "Šifrirni stroj korišten tijekom Drugog svjetskog rata",
+        "Godina izrade": 1940,
+        "Kategorija": "Kriptografski uređaj",
+        "Status": "Replika"
+    },
+    {
+        "Naziv": "Prvi hrvatski robot",
+        "Opis": "Robot kojeg su 1968. vodili po TRgu bana Josipa Jelačića u Zagrebu i tada je pričao sa Zagrepčanima koji su ga čudno gledali",
+        "Godina izrade": 1969,
+        "Kategorija": "Robot",
+        "Status": "Original"
+    },
+    {
+        "Naziv": "ENIAC",
+        "Opis": "Prvo digitalno računalo opće namjene",
+        "Godina izrade": 1946,
+        "Kategorija": "Računalo",
+        "Status": "Restauriran"
+    },
+    {
+        "Naziv": "Apple I",
+        "Opis": "Prvo komercijalno uspješno osobno računalo",
+        "Godina izrade": 1976,
+        "Kategorija": "Računalo",
+        "Status": "Replika"
+    },
+    {
+        "Naziv": "Motorola DynaTAC 8000X",
+        "Opis": "Prvi komercijalno dostupan mobilni telefon",
+        "Godina izrade": 1983,
+        "Kategorija": "Mobilni telefon",
+        "Status": "Original"
+    },
+    {
+        "Naziv": "Nokia 3310",
+        "Opis": "Kultni mobilni telefon poznat po svojoj trajnosti i jednostavnosti",
+        "Godina izrade": 1983,
+        "Kategorija": "Mobilni telefon",
+        "Status": "Original"
+    },
+    {
+        "Naziv": "iPhone (prva generacija)",
+        "Opis": "Revolucionarni mobilni telefon koji je promijenio industriju",
+        "Godina izrade": 2007,
+        "Kategorija": "Mobilni telefon",
+        "Status": "Original"
+    },
+    {
+        "Naziv": "Parna lokomotiva",
+        "Opis": "Predstavlja preteču modernih lokomotiva",
+        "Godina izrade": 1804,
+        "Kategorija": "Lokomotiva",
+        "Status": "Replika"
+    },
+    {
+        "Naziv": "Ford Model T",
+        "Opis": "Prvi masovno proizvedeni automobil",
+        "Godina izrade": 1908,
+        "Kategorija": "Automobil",
+        "Status": "Replika"
+    },
+    {
+        "Naziv": "Tesla Model S",
+        "Opis": "Električni automobil koji je popularizirao koncept luksuznih električnih vozila",
+        "Godina izrade": 2012,
+        "Kategorija": "Automobil",
+        "Status": "Replika"
+    }
+]
